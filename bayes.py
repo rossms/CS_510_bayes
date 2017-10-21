@@ -1,3 +1,4 @@
+from __future__ import print_function
 import math, os, pickle, re
 
 class Bayes_Classifier:
@@ -9,8 +10,32 @@ class Bayes_Classifier:
 		is ready to classify input text.'''
 
     def train(self):
-		'''Trains the Naive Bayes Sentiment Classifier.'''
-
+        '''Trains the Naive Bayes Sentiment Classifier.'''
+        lFileList = []
+        for fFileObj in os.walk("./movies_reviews/"):
+            lFileList = fFileObj[2]
+            break
+        posFileList = []
+        negFileList = []
+        for fileName in lFileList:
+            if re.search(r'\-1\-',fileName):
+                negFileList.append(fileName)
+            elif re.search(r'\-5\-',fileName):
+                posFileList.append(fileName)
+        print(len(posFileList))
+        print(len(negFileList))
+        negDictionary = dict()
+        posDictionary = dict()
+        for fileName in negFileList:
+            fileText = self.loadFile('./movies_reviews/'+fileName)
+            self.countTokens(self.tokenize(fileText),negDictionary)
+        for fileName in posFileList:
+            fileText = self.loadFile('./movies_reviews/'+fileName)
+            self.countTokens(self.tokenize(fileText),posDictionary)
+        print(len(negDictionary))
+        print(len(posDictionary))
+        self.save(negDictionary, './negDictionary.txt')
+        self.save(posDictionary, './posDictionary.txt')
 
     def classify(self, sText):
 		'''Given a target string sText, this function returns the most likely document
@@ -64,8 +89,8 @@ class Bayes_Classifier:
 
 		return lTokens
 
-    def countTokens(self, lTokens):
-		dictionary = dict()
+    def countTokens(self, lTokens, dictionary):
+		#dictionary = dict()
 		for word in lTokens:
 			 if word in dictionary:
 					currCount = int(dictionary.get(word))
