@@ -77,16 +77,16 @@ class Bayes_Classifier:
         posFeatureProb = Decimal(1.0)
         negFeatureProb = Decimal(1.0)
         for word in classifyTokens:
-            freqWordPos = Decimal(sPosDictionary.get(word,1) / sumPosDictionaryVals)
-            posFeatureProb *= Decimal(freqWordPos)
-            freqWordNeg = Decimal(sNegDictionary.get(word,1) / sumNegDictionaryVals)
-            negFeatureProb *= Decimal(freqWordNeg)
+            freqWordPos = Decimal((sPosDictionary.get(word,1) + 1) / (sumPosDictionaryVals + posDocsLen))
+            posFeatureProb *= Decimal(math.log(freqWordPos))
+            freqWordNeg = Decimal((sNegDictionary.get(word,1) + 1)/ (sumNegDictionaryVals + negDocsLen))
+            negFeatureProb *= Decimal(math.log(freqWordNeg))
 
 
-        probDocPos = priorPositive * posFeatureProb
-        probDocNeg = priorNegative * negFeatureProb
-        #print(probDocPos)
-        #print(probDocNeg)
+        probDocPos = Decimal(math.log(priorPositive) * math.log(posFeatureProb))
+        probDocNeg = Decimal(math.log(priorNegative) * math.log(negFeatureProb))
+        print(probDocPos)
+        print(probDocNeg)
 
         #print(probDocPos.as_tuple().exponent)
         #print(probDocNeg.as_tuple().exponent)
