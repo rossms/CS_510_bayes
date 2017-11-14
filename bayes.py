@@ -74,31 +74,28 @@ class Bayes_Classifier:
 
         classifyTokens = self.tokenize(sText)
         #print(classifyTokens)
-        posFeatureProb = Decimal(1.0)
-        negFeatureProb = Decimal(1.0)
+        posFeatureProb = Decimal(0.0)
+        negFeatureProb = Decimal(0.0)
         for word in classifyTokens:
             freqWordPos = Decimal((sPosDictionary.get(word,1) + 1) / (sumPosDictionaryVals + posDocsLen))
-            posFeatureProb *= Decimal(math.log(freqWordPos))
+            #print(freqWordPos)
+            #print(math.log10(freqWordPos))
+            posFeatureProb += Decimal(math.log10(freqWordPos))
+            #print(posFeatureProb)
             freqWordNeg = Decimal((sNegDictionary.get(word,1) + 1)/ (sumNegDictionaryVals + negDocsLen))
-            negFeatureProb *= Decimal(math.log(freqWordNeg))
+            negFeatureProb += Decimal(math.log10(freqWordNeg))
 
-
-        probDocPos = Decimal(math.log(priorPositive) * math.log(posFeatureProb))
-        probDocNeg = Decimal(math.log(priorNegative) * math.log(negFeatureProb))
+        probDocPos = Decimal(Decimal(math.log10(priorPositive)) + posFeatureProb)
+        probDocNeg = Decimal(Decimal(math.log10(priorNegative)) + negFeatureProb)
         print(probDocPos)
         print(probDocNeg)
 
-        #print(probDocPos.as_tuple().exponent)
-        #print(probDocNeg.as_tuple().exponent)
-
-        if(probDocPos.as_tuple().exponent == probDocNeg.as_tuple().exponent):
+        if(int(probDocPos) == int(probDocNeg)):
             print('neutral')
         elif(probDocPos > probDocNeg):
             print('positive')
         else:
             print('negative')
-
-        #if ()
 
 
     def loadFile(self, sFilename):
