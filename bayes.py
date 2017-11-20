@@ -39,8 +39,6 @@ class Bayes_Classifier:
                 negFileList.append(fileName)
             elif re.search(r'\-5\-',fileName):
                 posFileList.append(fileName)
-        #print(len(posFileList))
-        #print(len(negFileList))
         negDictionary = dict()
         posDictionary = dict()
         for fileName in negFileList:
@@ -49,8 +47,6 @@ class Bayes_Classifier:
         for fileName in posFileList:
             fileText = self.loadFile('./movies_reviews/'+fileName)
             self.countTokens(self.tokenize(fileText),posDictionary)
-        #print(len(negDictionary))
-        #print(len(posDictionary))
         self.save(negDictionary, './negDictionary.txt')
         self.save(posDictionary, './posDictionary.txt')
 
@@ -95,17 +91,12 @@ class Bayes_Classifier:
 
         probDocPos = Decimal(Decimal(math.log10(priorPositive)) + posFeatureProb)
         probDocNeg = Decimal(Decimal(math.log10(priorNegative)) + negFeatureProb)
-        #print(probDocPos)
-        #print(probDocNeg)
 
         if(int(probDocPos) == int(probDocNeg)):
-            #print('neutral')
             return 'neutral'
         elif(probDocPos > probDocNeg):
-            #print('positive')
             return 'positive'
         else:
-            #print('negative')
             return 'negative'
 
 
@@ -156,7 +147,6 @@ class Bayes_Classifier:
 		return lTokens
 
     def countTokens(self, lTokens, dictionary):
-		#dictionary = dict()
 		for word in lTokens:
 			 if word in dictionary:
 					currCount = int(dictionary.get(word))

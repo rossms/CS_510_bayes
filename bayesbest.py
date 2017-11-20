@@ -4,12 +4,41 @@ import math, os, pickle, re, string
 from decimal import *
 
 class Bayes_Classifier:
-
-    def __init__(self, trainDirectory = "movie_reviews/"):
-		'''This method initializes and trains the Naive Bayes Sentiment Classifier.  If a
-		cache of a trained classifier has been stored, it loads this cache.  Otherwise,
-		the system will proceed through training.  After running this method, the classifier
-		is ready to classify input text.'''
+    negSingleDictionary = dict()
+    posSingleDictionary = dict()
+    #negTupleDictionary = dict()
+    #posTupleDictionary = dict()
+    negCapsDictionary = dict()
+    posCapsDictionary = dict()
+    def __init__(self):
+    	'''This method initializes and trains the Naive Bayes Sentiment Classifier.  If a
+    	cache of a trained classifier has been stored, it loads this cache.  Otherwise,
+    	the system will proceed through training.  After running this method, the classifier
+    	is ready to classify input text.'''
+        global negSingleDictionary
+        global posSingleDictionary
+        #global negTupleDictionary
+        #global posTupleDictionary
+        global negCapsDictionary
+        global posCapsDictionary
+        if (os.path.isfile('./negSingleDictionary.txt') & os.path.isfile('./posSingleDictionary.txt') & os.path.isfile('./negCapsDictionary.txt') & os.path.isfile('./posCapsDictionary.txt')):
+            negSingleDictionary = self.load('./negSingleDictionary.txt')
+            posSingleDictionary = self.load('./posSingleDictionary.txt')
+            negCapsDictionary = self.load('./negCapsDictionary.txt')
+            posCapsDictionary = self.load('./posCapsDictionary.txt')
+        else:
+            try:
+                os.remove('./negSingleDictionary.txt')
+                os.remove('./posSingleDictionary.txt')
+                os.remove('./negCapsDictionary.txt')
+                os.remove('./posCapsDictionary.txt')
+            except OSError:
+                pass
+            self.train()
+            negSingleDictionary = self.load('./negSingleDictionary.txt')
+            posSingleDictionary = self.load('./posSingleDictionary.txt')
+            negCapsDictionary = self.load('./negCapsDictionary.txt')
+            posCapsDictionary = self.load('./posCapsDictionary.txt')
 
     def train(self):
         '''Trains the Naive Bayes Sentiment Classifier.'''
@@ -24,8 +53,6 @@ class Bayes_Classifier:
                 negFileList.append(fileName)
             elif re.search(r'\-5\-',fileName):
                 posFileList.append(fileName)
-        #print(len(posFileList))
-        #print(len(negFileList))
         negSingleDictionary = dict()
         posSingleDictionary = dict()
         negTupleDictionary = dict()
@@ -40,23 +67,19 @@ class Bayes_Classifier:
         for fileName in posFileList:
             fileText = self.loadFile('./movies_reviews/'+fileName)
             self.countTokens(self.tokenize(fileText),posSingleDictionary)
-        #print(len(negSingleDictionary))
-        #print(len(posSingleDictionary))
         self.save(negSingleDictionary, './negSingleDictionary.txt')
         self.save(posSingleDictionary, './posSingleDictionary.txt')
 
         # create tuple (word1, word2), (wordn-1, wordn) neg and pos dictionaries
 
-        for fileName in negFileList:
-            fileText = self.loadFile('./movies_reviews/'+fileName)
-            self.countTokens(self.tuplize(self.tokenize(fileText)),negTupleDictionary)
-        for fileName in posFileList:
-            fileText = self.loadFile('./movies_reviews/'+fileName)
-            self.countTokens(self.tuplize(self.tokenize(fileText)),posTupleDictionary)
-        #print(len(negTupleDictionary))
-        #print(len(posTupleDictionary))
-        self.save(negTupleDictionary, './negTupleDictionary.txt')
-        self.save(posTupleDictionary, './posTupleDictionary.txt')
+        # for fileName in negFileList:
+        #     fileText = self.loadFile('./movies_reviews/'+fileName)
+        #     self.countTokens(self.tuplize(self.tokenize(fileText)),negTupleDictionary)
+        # for fileName in posFileList:
+        #     fileText = self.loadFile('./movies_reviews/'+fileName)
+        #     self.countTokens(self.tuplize(self.tokenize(fileText)),posTupleDictionary)
+        # self.save(negTupleDictionary, './negTupleDictionary.txt')
+        # self.save(posTupleDictionary, './posTupleDictionary.txt')
 
         # create UPPERCASE neg and pos dictionaries
 
@@ -66,17 +89,23 @@ class Bayes_Classifier:
         for fileName in posFileList:
             fileText = self.loadFile('./movies_reviews/'+fileName)
             self.countTokens(self.tokenizeCaps(fileText),posCapsDictionary)
-        #print(len(negCapsDictionary))
-        #print(len(posCapsDictionary))
         self.save(negCapsDictionary, './negCapsDictionary.txt')
         self.save(posCapsDictionary, './posCapsDictionary.txt')
 
 
-    def classify(self, sPosDictionary, sNegDictionary, sPosTupleDictionary, sNegTupleDictionary, sPosCapsDictionary, sNegCapsDictionary,  sText):
+    def classify(self, sText):
         '''Given a target string sText, this function returns the most likely document
         class to which the target string belongs. This function should return one of three
         strings: "positive", "negative" or "neutral".
         '''
+        global negSingleDictionary
+        global posSingleDictionary
+        global negCapsDictionary
+        global posCapsDictionary
+        sPosDictionary = posSingleDictionary
+        sNegDictionary = negSingleDictionary
+        sPosCapsDictionary = posCapsDictionary
+        sNegCapsDictionary = negCapsDictionary
         lFileList = []
         for fFileObj in os.walk("./movies_reviews/"):
             lFileList = fFileObj[2]
@@ -91,18 +120,12 @@ class Bayes_Classifier:
         posDocsLen = int(len(posFileList))
         negDocsLen = int(len(negFileList))
         totalDocsLen = int(len(lFileList))
-        #print('pos docs:',posDocsLen)
-        #print('neg docs:',negDocsLen)
-        #print('tot docs:',totalDocsLen)
         getcontext.prec = 100
         priorPositive = Decimal(posDocsLen/totalDocsLen)
         priorNegative = Decimal(negDocsLen/totalDocsLen)
-        #print(priorPositive)
-        #print(priorNegative)
 
         ###################
         # take the probablility of single features (each word is its own feature)
-
 
         classifyTokens = self.tokenize(sText)
         calculatedProb = self.calculateProbability(classifyTokens, sPosDictionary, sNegDictionary, posDocsLen, negDocsLen, priorPositive, priorNegative)
@@ -120,14 +143,9 @@ class Bayes_Classifier:
 
         probDocPos = round((calculatedProb[0] + calculatedCapsProb[0]) / 2,1)
         probDocNeg = round((calculatedProb[1] + calculatedCapsProb[1]) / 2,1)
-        #print(calculatedProb)
-        #print(tupleCalculatedProb)
 
         #sVal
         #if (probSingleDocPos < 0):
-
-        #print(probSingleDocPos)
-        #print(probSingleDocNeg)
 
         #probDocPos = math.log10(probSingleDocPos) + math.log10(probTupleDocPos)
         #probDocNeg = math.log10(probSingleDocNeg) + math.log10(probTupleDocNeg)
@@ -135,19 +153,13 @@ class Bayes_Classifier:
         # probDocNeg = probSingleDocNeg * probTupleDocNeg
         # probDocPos = probTupleDocPos
         # probDocNeg = probTupleDocNeg
-        #
-        #print(probDocPos)
-        #print(probDocNeg)
-        #
-        if(probDocPos == probDocNeg):
-            print('neutral')
+
+        if(int(probDocPos) == int(probDocNeg)):
+            return 'neutral'
         elif(probDocPos > probDocNeg):
-            print('positive')
+            return 'positive'
         else:
-            print('negative')
-
-
-
+            return 'negative'
 
     def loadFile(self, sFilename):
 		'''Given a file name, return the contents of the file as a string.'''
@@ -197,7 +209,6 @@ class Bayes_Classifier:
 		return lTokens
 
     def countTokens(self, lTokens, dictionary):
-		#dictionary = dict()
 		for word in lTokens:
 			 if word in dictionary:
 					currCount = int(dictionary.get(word))
@@ -221,23 +232,16 @@ class Bayes_Classifier:
     def calculateProbability(self, classifyTokens, sPosDictionary, sNegDictionary, posDocsLen, negDocsLen, priorPositive, priorNegative):
         sumPosDictionaryVals = sum(sPosDictionary.values())
         sumNegDictionaryVals = sum(sNegDictionary.values())
-        #print(sumPosDictionaryVals)
-        #print(sumNegDictionaryVals)
         posFeatureProb = Decimal(0.0)
         negFeatureProb = Decimal(0.0)
         for word in classifyTokens:
             freqWordPos = Decimal((sPosDictionary.get(word,1) + 1) / (sumPosDictionaryVals + posDocsLen))
-            #print(freqWordPos)
-            #print(math.log10(freqWordPos))
             posFeatureProb += Decimal(math.log10(freqWordPos))
-            #print(posFeatureProb)
             freqWordNeg = Decimal((sNegDictionary.get(word,1) + 1)/ (sumNegDictionaryVals + negDocsLen))
             negFeatureProb += Decimal(math.log10(freqWordNeg))
 
         probDocPos = Decimal(Decimal(math.log10(priorPositive)) + posFeatureProb)
         probDocNeg = Decimal(Decimal(math.log10(priorNegative)) + negFeatureProb)
-        #print(probDocPos)
-        #print(probDocNeg)
         return (probDocPos,probDocNeg)
 
     def tokenizeCaps(self, sText):
