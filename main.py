@@ -2,7 +2,7 @@ from bayes_best import *
 
 Bayes = Bayes_Classifier()
 
-testFile = Bayes.loadFile('./movies_reviews/movies-1-168.txt')
+testFile = Bayes.loadFile('./test.txt')
 #testFile = Bayes.loadFile('./test.txt')
 #print(testFile)
 #print(Bayes.countTokens(Bayes.tokenize(testFile)))

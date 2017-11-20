@@ -4,12 +4,27 @@ import math, os, pickle, re
 from decimal import *
 
 class Bayes_Classifier:
-
-    def __init__(self, trainDirectory = "movie_reviews/"):
-		'''This method initializes and trains the Naive Bayes Sentiment Classifier.  If a
-		cache of a trained classifier has been stored, it loads this cache.  Otherwise,
-		the system will proceed through training.  After running this method, the classifier
-		is ready to classify input text.'''
+    negDictionary = dict()
+    posDictionary = dict()
+    def __init__(self):
+    	'''This method initializes and trains the Naive Bayes Sentiment Classifier.  If a
+    	cache of a trained classifier has been stored, it loads this cache.  Otherwise,
+    	the system will proceed through training.  After running this method, the classifier
+    	is ready to classify input text.'''
+        global negDictionary
+        global posDictionary
+        if (os.path.isfile('./negDictionary.txt') & os.path.isfile('./posDictionary.txt')):
+            negDictionary = self.load('./negDictionary.txt')
+            posDictionary = self.load('./posDictionary.txt')
+        else:
+            try:
+                os.remove('./negDictionary.txt')
+                os.remove('./posDictionary.txt')
+            except OSError:
+                pass
+            self.train()
+            negDictionary = self.load('./negDictionary.txt')
+            posDictionary = self.load('./posDictionary.txt')
 
     def train(self):
         '''Trains the Naive Bayes Sentiment Classifier.'''
@@ -24,8 +39,8 @@ class Bayes_Classifier:
                 negFileList.append(fileName)
             elif re.search(r'\-5\-',fileName):
                 posFileList.append(fileName)
-        print(len(posFileList))
-        print(len(negFileList))
+        #print(len(posFileList))
+        #print(len(negFileList))
         negDictionary = dict()
         posDictionary = dict()
         for fileName in negFileList:
@@ -34,16 +49,20 @@ class Bayes_Classifier:
         for fileName in posFileList:
             fileText = self.loadFile('./movies_reviews/'+fileName)
             self.countTokens(self.tokenize(fileText),posDictionary)
-        print(len(negDictionary))
-        print(len(posDictionary))
+        #print(len(negDictionary))
+        #print(len(posDictionary))
         self.save(negDictionary, './negDictionary.txt')
         self.save(posDictionary, './posDictionary.txt')
 
-    def classify(self, sPosDictionary, sNegDictionary, sText):
+    def classify(self, sText):
         '''Given a target string sText, this function returns the most likely document
         class to which the target string belongs. This function should return one of three
         strings: "positive", "negative" or "neutral".
         '''
+        global posDictionary
+        global negDictionary
+        sPosDictionary = posDictionary
+        sNegDictionary = negDictionary
         lFileList = []
         for fFileObj in os.walk("./movies_reviews/"):
             lFileList = fFileObj[2]
@@ -58,44 +77,36 @@ class Bayes_Classifier:
         posDocsLen = int(len(posFileList))
         negDocsLen = int(len(negFileList))
         totalDocsLen = int(len(lFileList))
-        #print('pos docs:',posDocsLen)
-        #print('neg docs:',negDocsLen)
-        #print('tot docs:',totalDocsLen)
         getcontext.prec = 100
         priorPositive = Decimal(posDocsLen/totalDocsLen)
         priorNegative = Decimal(negDocsLen/totalDocsLen)
-        #print(priorPositive)
-        #print(priorNegative)
 
         sumPosDictionaryVals = sum(sPosDictionary.values())
         sumNegDictionaryVals = sum(sNegDictionary.values())
-        #print(sumPosDictionaryVals)
-        #print(sumNegDictionaryVals)
 
         classifyTokens = self.tokenize(sText)
-        #print(classifyTokens)
         posFeatureProb = Decimal(0.0)
         negFeatureProb = Decimal(0.0)
         for word in classifyTokens:
             freqWordPos = Decimal((sPosDictionary.get(word,1) + 1) / (sumPosDictionaryVals + posDocsLen))
-            #print(freqWordPos)
-            #print(math.log10(freqWordPos))
             posFeatureProb += Decimal(math.log10(freqWordPos))
-            #print(posFeatureProb)
             freqWordNeg = Decimal((sNegDictionary.get(word,1) + 1)/ (sumNegDictionaryVals + negDocsLen))
             negFeatureProb += Decimal(math.log10(freqWordNeg))
 
         probDocPos = Decimal(Decimal(math.log10(priorPositive)) + posFeatureProb)
         probDocNeg = Decimal(Decimal(math.log10(priorNegative)) + negFeatureProb)
-        print(probDocPos)
-        print(probDocNeg)
+        #print(probDocPos)
+        #print(probDocNeg)
 
         if(int(probDocPos) == int(probDocNeg)):
-            print('neutral')
+            #print('neutral')
+            return 'neutral'
         elif(probDocPos > probDocNeg):
-            print('positive')
+            #print('positive')
+            return 'positive'
         else:
-            print('negative')
+            #print('negative')
+            return 'negative'
 
 
     def loadFile(self, sFilename):
