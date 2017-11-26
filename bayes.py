@@ -92,9 +92,10 @@ class Bayes_Classifier:
         probDocPos = Decimal(Decimal(math.log10(priorPositive)) + posFeatureProb)
         probDocNeg = Decimal(Decimal(math.log10(priorNegative)) + negFeatureProb)
 
-        if(int(probDocPos) == int(probDocNeg)):
-            return 'neutral'
-        elif(probDocPos > probDocNeg):
+        #if(int(probDocPos) == int(probDocNeg)):
+        #    return 'neutral'
+        #elif(probDocPos > probDocNeg):
+        if(probDocPos > probDocNeg):
             return 'positive'
         else:
             return 'negative'

@@ -6,8 +6,8 @@ from decimal import *
 class Bayes_Classifier:
     negSingleDictionary = dict()
     posSingleDictionary = dict()
-    #negTupleDictionary = dict()
-    #posTupleDictionary = dict()
+    negTupleDictionary = dict()
+    posTupleDictionary = dict()
     negCapsDictionary = dict()
     posCapsDictionary = dict()
     def __init__(self):
@@ -17,21 +17,25 @@ class Bayes_Classifier:
     	is ready to classify input text.'''
         global negSingleDictionary
         global posSingleDictionary
-        #global negTupleDictionary
-        #global posTupleDictionary
+        global negTupleDictionary
+        global posTupleDictionary
         global negCapsDictionary
         global posCapsDictionary
-        if (os.path.isfile('./negSingleDictionary.txt') & os.path.isfile('./posSingleDictionary.txt') & os.path.isfile('./negCapsDictionary.txt') & os.path.isfile('./posCapsDictionary.txt')):
+        if (os.path.isfile('./negSingleDictionary.txt') & os.path.isfile('./posSingleDictionary.txt') & os.path.isfile('./negCapsDictionary.txt') & os.path.isfile('./posCapsDictionary.txt')& os.path.isfile('./negTupleDictionary.txt') & os.path.isfile('./posTupleDictionary.txt')):
             negSingleDictionary = self.load('./negSingleDictionary.txt')
             posSingleDictionary = self.load('./posSingleDictionary.txt')
             negCapsDictionary = self.load('./negCapsDictionary.txt')
             posCapsDictionary = self.load('./posCapsDictionary.txt')
+            negTupleDictionary = self.load('./negTupleDictionary.txt')
+            posTupleDictionary = self.load('./posTupleDictionary.txt')
         else:
             try:
                 os.remove('./negSingleDictionary.txt')
                 os.remove('./posSingleDictionary.txt')
                 os.remove('./negCapsDictionary.txt')
                 os.remove('./posCapsDictionary.txt')
+                os.remove('./negTupleDictionary.txt')
+                os.remove('./posTupleDictionary.txt')
             except OSError:
                 pass
             self.train()
@@ -39,6 +43,8 @@ class Bayes_Classifier:
             posSingleDictionary = self.load('./posSingleDictionary.txt')
             negCapsDictionary = self.load('./negCapsDictionary.txt')
             posCapsDictionary = self.load('./posCapsDictionary.txt')
+            negTupleDictionary = self.load('./negTupleDictionary.txt')
+            posTupleDictionary = self.load('./posTupleDictionary.txt')
 
     def train(self):
         '''Trains the Naive Bayes Sentiment Classifier.'''
@@ -72,14 +78,14 @@ class Bayes_Classifier:
 
         # create tuple (word1, word2), (wordn-1, wordn) neg and pos dictionaries
 
-        # for fileName in negFileList:
-        #     fileText = self.loadFile('./movies_reviews/'+fileName)
-        #     self.countTokens(self.tuplize(self.tokenize(fileText)),negTupleDictionary)
-        # for fileName in posFileList:
-        #     fileText = self.loadFile('./movies_reviews/'+fileName)
-        #     self.countTokens(self.tuplize(self.tokenize(fileText)),posTupleDictionary)
-        # self.save(negTupleDictionary, './negTupleDictionary.txt')
-        # self.save(posTupleDictionary, './posTupleDictionary.txt')
+        for fileName in negFileList:
+            fileText = self.loadFile('./movies_reviews/'+fileName)
+            self.countTokens(self.tuplize(self.tokenizeCaps(fileText)),negTupleDictionary)
+        for fileName in posFileList:
+            fileText = self.loadFile('./movies_reviews/'+fileName)
+            self.countTokens(self.tuplize(self.tokenizeCaps(fileText)),posTupleDictionary)
+        self.save(negTupleDictionary, './negTupleDictionary.txt')
+        self.save(posTupleDictionary, './posTupleDictionary.txt')
 
         # create UPPERCASE neg and pos dictionaries
 
@@ -102,10 +108,14 @@ class Bayes_Classifier:
         global posSingleDictionary
         global negCapsDictionary
         global posCapsDictionary
+        global negTupleDictionary
+        global posTupleDictionary
         sPosDictionary = posSingleDictionary
         sNegDictionary = negSingleDictionary
         sPosCapsDictionary = posCapsDictionary
         sNegCapsDictionary = negCapsDictionary
+        sPosTupleDictionary = posTupleDictionary
+        sNegTupleDictionary = negTupleDictionary
         lFileList = []
         for fFileObj in os.walk("./movies_reviews/"):
             lFileList = fFileObj[2]
@@ -129,21 +139,46 @@ class Bayes_Classifier:
 
         classifyTokens = self.tokenize(sText)
         calculatedProb = self.calculateProbability(classifyTokens, sPosDictionary, sNegDictionary, posDocsLen, negDocsLen, priorPositive, priorNegative)
+        #print(calculatedProb[0])
+        #print(calculatedProb[1])
+        classifyTupleTokens = self.tuplize(self.tokenizeCaps(sText))
+        tupleCalculatedProb = self.calculateProbability(classifyTupleTokens, sPosTupleDictionary, sNegTupleDictionary, posDocsLen, negDocsLen, priorPositive, priorNegative)
+        #print(tupleCalculatedProb[0])
+        #print(tupleCalculatedProb[1])
 
-        #classifyTupleTokens = self.tuplize(self.tokenize(sText))
-        #tupleCalculatedProb = self.calculateProbability(classifyTupleTokens, sPosTupleDictionary, sNegTupleDictionary, posDocsLen, negDocsLen, priorPositive, priorNegative)
         classifUpperTokens = self.tokenizeCaps(sText)
         calculatedCapsProb = self.calculateProbability(classifUpperTokens, sPosCapsDictionary, sNegCapsDictionary, posDocsLen, negDocsLen, priorPositive, priorNegative)
-
+        #print(calculatedCapsProb[0])
+        #print(calculatedCapsProb[1])
         #probSingleDocPos = math.fabs(calculatedProb[0]/100)
         #probSingleDocNeg = math.fabs(calculatedProb[1]/100)
 
         #probTupleDocPos = math.fabs(tupleCalculatedProb[0]/100)
         #probTupleDocNeg = math.fabs(tupleCalculatedProb[1]/100)
 
-        probDocPos = round((calculatedProb[0] + calculatedCapsProb[0]) / 2,1)
-        probDocNeg = round((calculatedProb[1] + calculatedCapsProb[1]) / 2,1)
+        probDocPos = round(((calculatedProb[0] * Decimal(0.4)) + (calculatedCapsProb[0] * Decimal(0.4)) + (tupleCalculatedProb[0] * Decimal(0.2))),1)
+        probDocNeg = round(((calculatedProb[1] * Decimal(0.4)) + (calculatedCapsProb[1] * Decimal(0.4)) + (tupleCalculatedProb[1] * Decimal(0.2))),1)
+        if(calculatedProb[0] > calculatedProb[1]):
+            singleProb = 1
+        else:
+            singleProb = -1
+        if(calculatedCapsProb[0] > calculatedCapsProb[1]):
+            capsProb = 1
+        else:
+            capsProb = -1
+        if(tupleCalculatedProb[0] > tupleCalculatedProb[1]):
+            tupleProb = 1
+        else:
+            tupleProb = -1
 
+        prob = singleProb + capsProb + tupleProb
+        #print(prob)
+        if(prob > 0):
+            return 'positive'
+        else:
+            return 'negative'
+        #print(probDocPos)
+        #print(probDocNeg)
         #sVal
         #if (probSingleDocPos < 0):
 
@@ -154,12 +189,13 @@ class Bayes_Classifier:
         # probDocPos = probTupleDocPos
         # probDocNeg = probTupleDocNeg
 
-        if(int(probDocPos) == int(probDocNeg)):
-            return 'neutral'
-        elif(probDocPos > probDocNeg):
-            return 'positive'
-        else:
-            return 'negative'
+        # if(int(probDocPos) == int(probDocNeg)):
+        #     return 'neutral'
+        # elif(probDocPos > probDocNeg):
+        # if(probDocPos > probDocNeg):
+        #     return 'positive'
+        # else:
+        #     return 'negative'
 
     def loadFile(self, sFilename):
 		'''Given a file name, return the contents of the file as a string.'''
@@ -192,7 +228,7 @@ class Bayes_Classifier:
 
 		lTokens = []
 		sToken = ""
-		sTextWordsOnly = sText.strip(string.punctuation)
+		sTextWordsOnly = sText.translate(None,string.punctuation)
 		for c in sTextWordsOnly:
 			if re.match("[a-zA-Z0-9]", str(c)) != None or c == "\'" or c == "_" or c == '-':
 				sToken += c
@@ -249,7 +285,8 @@ class Bayes_Classifier:
         occur in that string (in order).'''
         lTokens = []
         sToken = ""
-        for c in sText:
+        sTextWordsOnly = sText.translate(None,string.punctuation)
+        for c in sTextWordsOnly:
             u = c.upper()
             if re.match("[a-zA-Z0-9]", str(u)) != None or u == "\'" or u == "_" or u == '-':
                 sToken += u

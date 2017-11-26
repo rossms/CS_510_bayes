@@ -1,0 +1,200 @@
+-3
+movies-1-1019.txt negative
+-3
+movies-1-102.txt negative
+1
+movies-1-1050.txt positive
+-3
+movies-1-1067.txt negative
+-3
+movies-1-1069.txt negative
+-3
+movies-1-1076.txt negative
+-3
+movies-1-1077.txt negative
+-3
+movies-1-1078.txt negative
+-3
+movies-1-1087.txt negative
+-3
+movies-1-1092.txt negative
+-3
+movies-1-1107.txt negative
+-3
+movies-1-131.txt negative
+-3
+movies-1-168.txt negative
+-3
+movies-1-170.txt negative
+-3
+movies-1-174.txt negative
+-3
+movies-1-176.txt negative
+-3
+movies-1-177.txt negative
+-1
+movies-1-216.txt negative
+-3
+movies-1-222.txt negative
+1
+movies-1-286.txt positive
+-1
+movies-1-292.txt negative
+-3
+movies-1-32.txt negative
+-3
+movies-1-320.txt negative
+-3
+movies-1-339.txt negative
+-3
+movies-1-360.txt negative
+-3
+movies-1-443.txt negative
+-3
+movies-1-461.txt negative
+-1
+movies-1-554.txt negative
+-1
+movies-1-570.txt negative
+-3
+movies-1-572.txt negative
+-3
+movies-1-701.txt negative
+-3
+movies-1-733.txt negative
+-3
+movies-1-761.txt negative
+-3
+movies-1-766.txt negative
+-3
+movies-1-768.txt negative
+-3
+movies-1-772.txt negative
+-3
+movies-1-778.txt negative
+-3
+movies-1-779.txt negative
+-3
+movies-1-820.txt negative
+3
+movies-1-827.txt positive
+-3
+movies-1-831.txt negative
+1
+movies-1-833.txt positive
+-3
+movies-1-842.txt negative
+-3
+movies-1-891.txt negative
+-3
+movies-1-914.txt negative
+-3
+movies-1-927.txt negative
+-1
+movies-1-93.txt negative
+-3
+movies-1-966.txt negative
+-3
+movies-1-967.txt negative
+-3
+movies-1-981.txt negative
+1
+movies-5-10.txt positive
+-3
+movies-5-11.txt negative
+-3
+movies-5-12.txt negative
+1
+movies-5-13.txt positive
+1
+movies-5-16.txt positive
+1
+movies-5-17.txt positive
+1
+movies-5-19.txt positive
+1
+movies-5-2.txt positive
+3
+movies-5-20.txt positive
+1
+movies-5-21.txt positive
+1
+movies-5-22.txt positive
+1
+movies-5-23.txt positive
+3
+movies-5-26.txt positive
+3
+movies-5-27.txt positive
+3
+movies-5-28.txt positive
+-3
+movies-5-3.txt negative
+1
+movies-5-30.txt positive
+1
+movies-5-31.txt positive
+1
+movies-5-33.txt positive
+-3
+movies-5-36.txt negative
+1
+movies-5-37.txt positive
+1
+movies-5-39.txt positive
+-3
+movies-5-4.txt negative
+1
+movies-5-40.txt positive
+1
+movies-5-41.txt positive
+3
+movies-5-42.txt positive
+-3
+movies-5-43.txt negative
+-3
+movies-5-44.txt negative
+1
+movies-5-46.txt positive
+1
+movies-5-47.txt positive
+1
+movies-5-48.txt positive
+-3
+movies-5-49.txt negative
+1
+movies-5-5.txt positive
+1
+movies-5-50.txt positive
+3
+movies-5-52.txt positive
+1
+movies-5-53.txt positive
+1
+movies-5-55.txt positive
+3
+movies-5-56.txt positive
+1
+movies-5-59.txt positive
+1
+movies-5-6.txt positive
+-1
+movies-5-60.txt negative
+1
+movies-5-63.txt positive
+-3
+movies-5-64.txt negative
+1
+movies-5-65.txt positive
+1
+movies-5-67.txt positive
+1
+movies-5-68.txt positive
+1
+movies-5-69.txt positive
+-3
+movies-5-7.txt negative
+3
+movies-5-8.txt positive
+3
+movies-5-9.txt positive
