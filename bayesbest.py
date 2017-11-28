@@ -139,25 +139,15 @@ class Bayes_Classifier:
 
         classifyTokens = self.tokenize(sText)
         calculatedProb = self.calculateProbability(classifyTokens, sPosDictionary, sNegDictionary, posDocsLen, negDocsLen, priorPositive, priorNegative)
-        #print(calculatedProb[0])
-        #print(calculatedProb[1])
+
         classifyTupleTokens = self.tuplize(self.tokenizeCaps(sText))
         tupleCalculatedProb = self.calculateProbability(classifyTupleTokens, sPosTupleDictionary, sNegTupleDictionary, posDocsLen, negDocsLen, priorPositive, priorNegative)
-        #print(tupleCalculatedProb[0])
-        #print(tupleCalculatedProb[1])
 
         classifUpperTokens = self.tokenizeCaps(sText)
         calculatedCapsProb = self.calculateProbability(classifUpperTokens, sPosCapsDictionary, sNegCapsDictionary, posDocsLen, negDocsLen, priorPositive, priorNegative)
-        #print(calculatedCapsProb[0])
-        #print(calculatedCapsProb[1])
-        #probSingleDocPos = math.fabs(calculatedProb[0]/100)
-        #probSingleDocNeg = math.fabs(calculatedProb[1]/100)
 
-        #probTupleDocPos = math.fabs(tupleCalculatedProb[0]/100)
-        #probTupleDocNeg = math.fabs(tupleCalculatedProb[1]/100)
-
-        probDocPos = round(((calculatedProb[0] * Decimal(0.4)) + (calculatedCapsProb[0] * Decimal(0.4)) + (tupleCalculatedProb[0] * Decimal(0.2))),1)
-        probDocNeg = round(((calculatedProb[1] * Decimal(0.4)) + (calculatedCapsProb[1] * Decimal(0.4)) + (tupleCalculatedProb[1] * Decimal(0.2))),1)
+        #probDocPos = round(((calculatedProb[0] * Decimal(0.4)) + (calculatedCapsProb[0] * Decimal(0.4)) + (tupleCalculatedProb[0] * Decimal(0.2))),1)
+        #probDocNeg = round(((calculatedProb[1] * Decimal(0.4)) + (calculatedCapsProb[1] * Decimal(0.4)) + (tupleCalculatedProb[1] * Decimal(0.2))),1)
         if(calculatedProb[0] > calculatedProb[1]):
             singleProb = 1
         else:
@@ -172,30 +162,10 @@ class Bayes_Classifier:
             tupleProb = -1
 
         prob = singleProb + capsProb + tupleProb
-        #print(prob)
         if(prob > 0):
             return 'positive'
         else:
             return 'negative'
-        #print(probDocPos)
-        #print(probDocNeg)
-        #sVal
-        #if (probSingleDocPos < 0):
-
-        #probDocPos = math.log10(probSingleDocPos) + math.log10(probTupleDocPos)
-        #probDocNeg = math.log10(probSingleDocNeg) + math.log10(probTupleDocNeg)
-        # probDocPos = probSingleDocPos * probTupleDocPos
-        # probDocNeg = probSingleDocNeg * probTupleDocNeg
-        # probDocPos = probTupleDocPos
-        # probDocNeg = probTupleDocNeg
-
-        # if(int(probDocPos) == int(probDocNeg)):
-        #     return 'neutral'
-        # elif(probDocPos > probDocNeg):
-        # if(probDocPos > probDocNeg):
-        #     return 'positive'
-        # else:
-        #     return 'negative'
 
     def loadFile(self, sFilename):
 		'''Given a file name, return the contents of the file as a string.'''
